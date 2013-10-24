@@ -1,0 +1,56 @@
+<h1 class="page-header">{{ page_title }}</h1>
+
+{% if cart.item_count == 0 %}
+<p class="lead">
+  {% include '__localize' with 'Your cart is empty' %}.{% unless settings.collection-to-link-to-if-cart-empty == blank %} <a href="{{ collections.[settings.collection-to-link-to-if-cart-empty].url }}">{% include '__localize' with 'Browse all products' %}</a>.{% endunless %}
+</p>
+{% else %}
+<script type="text/javascript">
+function remove_item(id) {
+  document.getElementById('updates_'+id).value = 0;
+  document.getElementById('cart').submit();
+}
+</script>
+
+<form action="/cart" method="post" id="cart">
+  <table class="table {% include '__table-formatting' %}">
+    <thead>
+      <tr>
+        <th class="hidden-phone">&nbsp;</th>
+        <th>{% include '__localize' with 'Item' %}</th>
+        <th class="money hidden-phone">{% include '__localize' with 'Price' %}</th>
+        <th class="text-center">{% include '__localize' with 'QTY' %}</th>
+        <th class="hidden-phone">&nbsp;</th>
+        <th class="money">{% include '__localize' with 'Line total' %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for i in cart.items %}
+      <tr>
+        <td class="span2 hidden-phone"><img src="{{ i.product.featured_image | product_img_url: 'small' }}" class="thumbnail"></td>
+        <td>
+          <strong>{{ i.product.title | link_to: i.product.url }}</strong>
+          <small class="muted">{{ i.title | remove: i.product.title | remove: ' - ' }}</small>
+        </td>
+        <td class="money hidden-phone"><span class='money'>{{ i.price | money_with_currency | replace: ' ','&nbsp' }}</span></td>
+        <td class="text-center">
+          <input type="text" class="input-mini" name="updates[{{ i.variant.id }}]" id="updates_{{ i.variant.id }}" value="{{ i.quantity }}" onfocus="this.select();"/>
+        </td>
+        <td class="hidden-phone"><a class="muted" href="#" onclick="remove_item({{ i.variant.id }}); return false;"><i class="icon-trash"></i></a></td>
+        <td class="money">
+          <span class='money'>{{ i.line_price | money_with_currency | replace: ' ','&nbsp' }}</span>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  
+  <div class="form-actions text-right">
+    <h3><small>{% include '__localize' with 'Sub-total' %}</small> <span class='money'>{{ cart.total_price | money_with_currency | replace: ' ','&nbsp' }}</span></h3>
+    <div class="btn-group">
+      <input type="submit" id="update-cart" name="update" value="{% include '__localize' with 'Update' %}" class="btn" />
+      <input type="submit" name="checkout" value="{% include '__localize' with 'Checkout' %}" class="btn btn-primary" />
+    </div>
+  </div>
+</form>
+{% endif %}

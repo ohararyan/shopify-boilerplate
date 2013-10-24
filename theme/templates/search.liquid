@@ -1,0 +1,9 @@
+<h1 class="page-header">{% include 'smart-title' %}</h1>
+{% paginate search.results by settings.default-pagination %}
+{% for i in search.results %}    
+{% include '_search-item' %}
+{% endfor %}
+
+{% include 'pagination' %}
+
+{% endpaginate %}

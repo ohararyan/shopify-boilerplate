@@ -1,0 +1,19 @@
+{% capture vars %}
+{% if _collection.featured_image == blank and _collection.products.first.featured_image == blank %}
+  {% assign image = '<div class="image_placeholder">Collection Image</div>' %}
+{% else %}
+  {% if _collection.featured_image == blank %}
+    {% assign image = _collection.products.first.featured_image.src | product_img_url: 'large' | img_tag | link_to: _collection.url %}
+  {% else %}
+    {% assign image = _collection.featured_image.src | product_img_url: 'large' | img_tag | link_to: _collection.url %}
+  {% endif %}
+{% endif %}
+{% endcapture %}
+<li class="{% include '__thumbnail-span' %}">
+  <div class="thumbnail">
+    {{ image }}
+    <div class="caption">
+      <strong>{{ _collection.title | link_to: _collection.url, _collection.title }}</strong><span class="pull-right">{{ _collection.all_products_count }}&nbsp;{{ _collection.all_products_count | pluralize: 'product','products' }}</span>
+    </div>
+  </div>
+</li>
